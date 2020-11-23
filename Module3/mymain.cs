@@ -28,10 +28,10 @@ namespace GeneratedLexer
 
             int tok = 0;
             do {
-                tok = scanner.yylex();
-
+                tok = scanner.yylex();                                
+                
                 if (tok == (int)Tok.EOF)
-                {
+                {                    
                     Console.WriteLine();
                     Console.WriteLine("number of id: {0:D}", cnt_id);
                     Console.WriteLine("average length of the id: {0:N}", avg_id_len / cnt_id);

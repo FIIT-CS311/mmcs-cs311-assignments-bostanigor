@@ -44,8 +44,21 @@ namespace  GeneratedLexer
             do {
                 tok = myScanner.yylex();
 
+                if (tok == (int)Tok.ID) {
+                    idCount++;                    
+                    maxIdLength = Math.Max(myScanner.yyleng, maxIdLength);
+                    minIdLength = Math.Min(myScanner.yyleng, minIdLength);
+                    avgIdLength += myScanner.yyleng;
+                }
+                    
+                if (tok == (int)Tok.INUM)
+                    sumInt += Int32.Parse(myScanner.yytext);
+                if (tok == (int)Tok.RNUM)
+                    sumDouble += Double.Parse(myScanner.yytext);
+
                 if (tok == (int)Tok.EOF)
                 {
+                    avgIdLength /= idCount;
                     break;
                 }
             } while (true);
