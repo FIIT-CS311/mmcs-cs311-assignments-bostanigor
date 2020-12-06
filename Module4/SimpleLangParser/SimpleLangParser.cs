@@ -29,14 +29,52 @@ namespace SimpleLangParser
 
         public void Expr() 
         {
-            if (l.LexKind == Tok.ID || l.LexKind == Tok.INUM)
+            ExprT();
+            ExprA();                        
+        }
+
+        private void ExprT()
+        {
+            ExprM();
+            ExprB();            
+        }
+
+        private void ExprA()
+        {
+            if (l.LexKind == Tok.PLUS || l.LexKind == Tok.MINUS)
+            {
+                l.NextLexem();
+                ExprT();
+                ExprA();
+            }            
+        }
+
+        private void ExprB()
+        {
+            if (l.LexKind == Tok.MULT || l.LexKind == Tok.DIVISION)
+            {
+                l.NextLexem();
+                ExprM();
+                ExprB();
+            }            
+        }
+
+        private void ExprM()
+        {
+            if (l.LexKind == Tok.LEFT_BRACKET)
+            {
+                l.NextLexem();
+                Expr();
+                if (l.LexKind != Tok.RIGHT_BRACKET)
+                    SyntaxError(") expected");
+                l.NextLexem();
+            }
+            else if (l.LexKind == Tok.ID || l.LexKind == Tok.INUM)
             {
                 l.NextLexem();
             }
             else
-            {
-                SyntaxError("expression expected");
-            }
+                SyntaxError("id or inum expected");
         }
 
         public void Assign() 
@@ -76,6 +114,21 @@ namespace SimpleLangParser
                         Cycle(); 
                         break;
                     }
+                case Tok.WHILE:
+                    {
+                        While();
+                        break;
+                    }
+                case Tok.FOR:
+                    {
+                        For();
+                        break;
+                    }
+                case Tok.IF:
+                    {
+                        If();
+                        break;
+                    }
                 case Tok.ID:
                     {
                         Assign();
@@ -109,6 +162,59 @@ namespace SimpleLangParser
             l.NextLexem();  // пропуск cycle
             Expr();
             Statement();
+        }
+
+        public void While()
+        {
+            l.NextLexem();  // пропуск while
+            Expr();
+
+            if (l.LexKind != Tok.DO)
+                SyntaxError("do expected");
+            l.NextLexem();
+
+            Statement();
+        }
+
+        public void For()
+        {
+            l.NextLexem();  // пропуск for
+
+            if (l.LexKind != Tok.ID)
+                SyntaxError("id expected");            
+
+            Assign();
+
+            if (l.LexKind != Tok.TO)
+                SyntaxError("to expected");
+            l.NextLexem();
+
+            Expr();
+
+            if (l.LexKind != Tok.DO)
+                SyntaxError("do expected");
+            l.NextLexem();
+
+            Statement();
+        }
+
+        public void If()
+        {
+            l.NextLexem();  // пропуск if
+
+            Expr();
+
+            if (l.LexKind != Tok.THEN)
+                SyntaxError("then expected");
+            l.NextLexem();
+
+            Statement();
+
+            if (l.LexKind == Tok.ELSE)
+            {
+                l.NextLexem();
+                Statement();
+            }           
         }
 
         public void SyntaxError(string message) 

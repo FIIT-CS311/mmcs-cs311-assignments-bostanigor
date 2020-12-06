@@ -100,6 +100,13 @@ namespace SimpleLexer
             keywordsMap["begin"] = Tok.BEGIN;
             keywordsMap["end"] = Tok.END;
             keywordsMap["cycle"] = Tok.CYCLE;
+            keywordsMap["while"] = Tok.WHILE;
+            keywordsMap["for"] = Tok.FOR;
+            keywordsMap["do"] = Tok.DO;
+            keywordsMap["to"] = Tok.TO;
+            keywordsMap["if"] = Tok.IF;
+            keywordsMap["then"] = Tok.THEN;
+            keywordsMap["else"] = Tok.ELSE;            
             keywordsMap["mod"] = Tok.MOD;
             keywordsMap["div"] = Tok.DIV;
             keywordsMap["and"] = Tok.AND;
@@ -267,6 +274,16 @@ namespace SimpleLexer
             else if (currentCh == '=') {
                 NextCh();
                 LexKind = Tok.EQ;
+            }
+            else if (currentCh == '(')
+            {
+                NextCh();
+                LexKind = Tok.LEFT_BRACKET;
+            }
+            else if (currentCh == ')')
+            {
+                NextCh();
+                LexKind = Tok.RIGHT_BRACKET;
             }
             else if (char.IsLetter(currentCh))
             {
