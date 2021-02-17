@@ -117,6 +117,39 @@ namespace ProgramTree
         }
     }
 
+    public class IfNode : StatementNode
+    {
+        public ExprNode Expr { get; set; }
+        public StatementNode Stat { get; set; }
+        public IfNode(ExprNode expr, StatementNode stat)
+        {
+            Expr = expr;
+            Stat = stat;
+        }
+
+        public override void Visit(Visitor v)
+        {
+            v.VisitIfNode(this);
+        }
+    }
+
+    public class IfElseNode : IfNode
+    {
+        public ExprNode Expr { get; set; }
+        public StatementNode Stat { get; set; }
+        public StatementNode ElseStat { get; set; }
+        public IfElseNode(ExprNode expr, StatementNode stat, StatementNode elseStat) : base(expr, stat)
+        {
+            Expr = expr;
+            Stat = stat;
+            ElseStat = elseStat;
+        }
+        public override void Visit(Visitor v)
+        {
+            v.VisitIfElseNode(this);
+        }
+    }
+
     public class EmptyNode : StatementNode
     {
         public override void Visit(Visitor v)

@@ -84,5 +84,29 @@ namespace SimpleLang.Visitors
             for (int i = 1; i < w.vars.Count; i++)
                 Text += ',' + w.vars[i].Name;
         }
+
+        public override void VisitIfNode(IfNode i)
+        {
+            Text += IndentStr() + "if ";
+            i.Expr.Visit(this);
+            Text += "then" + Environment.NewLine;
+            IndentPlus();
+            i.Stat.Visit(this);
+            IndentMinus();
+        }
+
+        public override void VisitIfElseNode(IfElseNode i)
+        {
+            Text += IndentStr() + "if ";
+            i.Expr.Visit(this);
+            Text += "then" + Environment.NewLine;
+            IndentPlus();
+            i.Stat.Visit(this);
+            IndentMinus();
+            Text += IndentStr() + "else" + Environment.NewLine;
+            IndentPlus();
+            i.ElseStat.Visit(this);
+            IndentMinus();
+        }
     }
 }
