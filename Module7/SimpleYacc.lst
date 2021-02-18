@@ -1,6 +1,17 @@
+
+// ==========================================================================
+//  GPPG error listing for yacc source file <SimpleYacc.y>
+// ==========================================================================
+//  Version:  1.3.6
+//  Machine:  DESKTOP-C9HNSKT
+//  DateTime: 17.02.2021 20:42:13
+//  UserName: bosta
+// ==========================================================================
+
+
 %{
-// Эти объявления добавляются в класс GPPGParser, представляющий собой парсер, генерируемый системой gppg
-    public BlockNode root; // Корневой узел синтаксического дерева 
+// ГќГІГЁ Г®ГЎГєГїГўГ«ГҐГ­ГЁГї Г¤Г®ГЎГ ГўГ«ГїГѕГІГ±Гї Гў ГЄГ«Г Г±Г± GPPGParser, ГЇГ°ГҐГ¤Г±ГІГ ГўГ«ГїГѕГ№ГЁГ© Г±Г®ГЎГ®Г© ГЇГ Г°Г±ГҐГ°, ГЈГҐГ­ГҐГ°ГЁГ°ГіГҐГ¬Г»Г© Г±ГЁГ±ГІГҐГ¬Г®Г© gppg
+    public BlockNode root; // ГЉГ®Г°Г­ГҐГўГ®Г© ГіГ§ГҐГ« Г±ГЁГ­ГІГ ГЄГ±ГЁГ·ГҐГ±ГЄГ®ГЈГ® Г¤ГҐГ°ГҐГўГ  
     public Parser(AbstractScanner<ValueType, LexLocation> scanner) : base(scanner) { }
 	private bool InDefSect = false;
 %}
@@ -24,16 +35,18 @@
 
 %start progr
 
-%token BEGIN END CYCLE ASSIGN ASSIGNPLUS ASSIGNMINUS ASSIGNMULT SEMICOLON WRITE VAR PLUS MINUS MULT DIV LPAREN RPAREN COLUMN MOD IDIV
+%token BEGIN END CYCLE ASSIGN ASSIGNPLUS ASSIGNMINUS ASSIGNMULT SEMICOLON WRITE VAR PLUS MINUS MULT DIV LPAREN RPAREN COLUMN IF ELSE THEN
 %token <iVal> INUM 
 %token <dVal> RNUM 
 %token <sVal> ID
 
 %type <eVal> expr ident T F 
-%type <stVal> statement assign block cycle write empty var varlist 
+%type <stVal> statement assign block cycle write empty var varlist if
 %type <blVal> stlist block
 
 %%
+// Warning: NonTerminal symbol "if" is unreachable
+// -----------------------------------------------
 
 progr   : block { root = $1; }
 		;
@@ -64,7 +77,7 @@ ident 	: ID
 		{
 			if (!InDefSect)
 				if (!SymbolTable.vars.ContainsKey($1))
-					throw new Exception("("+@1.StartLine+","+@1.StartColumn+"): Переменная "+$1+" не описана");
+					throw new Exception("("+@1.StartLine+","+@1.StartColumn+"): ГЏГҐГ°ГҐГ¬ГҐГ­Г­Г Гї "+$1+" Г­ГҐ Г®ГЇГЁГ±Г Г­Г ");
 			$$ = new IdNode($1); 
 		}	
 	;
@@ -72,15 +85,13 @@ ident 	: ID
 assign 	: ident ASSIGN expr { $$ = new AssignNode($1 as IdNode, $3); }
 		;
 
-expr	: expr PLUS T { $$ = new BinOpNode($1,$3,"+"); }
-		| expr MINUS T { $$ = new BinOpNode($1,$3,"-"); }
-		| expr IDIV T { $$ = new BinOpNode($1,$3,"div"); }
-		| expr MOD T { $$ = new BinOpNode($1,$3,"%"); }
+expr	: expr PLUS T { $$ = new BinOpNode($1,$3,'+'); }
+		| expr MINUS T { $$ = new BinOpNode($1,$3,'-'); }
 		| T { $$ = $1; }
 		;
 		
-T 		: T MULT F { $$ = new BinOpNode($1,$3,"*"); }
-		| T DIV F { $$ = new BinOpNode($1,$3,"/"); }		
+T 		: T MULT F { $$ = new BinOpNode($1,$3,'*'); }
+		| T DIV F { $$ = new BinOpNode($1,$3,'/'); }
 		| F { $$ = $1; }
 		;
 		
@@ -106,6 +117,10 @@ var		: VAR { InDefSect = true; } varlist
 		}
 		;
 
+if	    : IF expr THEN statement { $$ = new IfNode($2, $4); }
+        | IF expr THEN statement ELSE statement { $$ = new IfElseNode($2, $4, $6); }
+		;
+
 varlist	: ident 
 		{ 
 			$$ = new VarDefNode($1 as IdNode); 
@@ -118,4 +133,6 @@ varlist	: ident
 		;
 	
 %%
+
+// ==========================================================================
 

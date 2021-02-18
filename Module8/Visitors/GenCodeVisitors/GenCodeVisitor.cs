@@ -32,17 +32,24 @@ namespace SimpleLang.Visitors
             binop.Right.Visit(this);
             switch (binop.Op)
             {
-                case '+':
+                case "+":
                     genc.Emit(OpCodes.Add);
                     break;
-                case '-':
+                case "-":
                     genc.Emit(OpCodes.Sub);
                     break;
-                case '*':
+                case "*":
                     genc.Emit(OpCodes.Mul);
                     break;
-                case '/':
+                case "/":
                     genc.Emit(OpCodes.Div);
+                    break;
+                case "div":
+                    genc.Emit(OpCodes.Div);
+                    break;
+                case "%":
+                case "mod":
+                    genc.Emit(OpCodes.Rem);
                     break;
             }
         }

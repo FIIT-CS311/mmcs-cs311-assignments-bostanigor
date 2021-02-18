@@ -1,3 +1,14 @@
+
+// ==========================================================================
+//  GPLEX error listing for lex source file <SimpleLex.lex>
+// ==========================================================================
+//  Version:  1.1.3.301
+//  Machine:  DESKTOP-C9HNSKT
+//  DateTime: 17.02.2021 21:18:33
+//  UserName: bosta
+// ==========================================================================
+
+
 %using SimpleParser;
 %using QUT.Gppg;
 %using System.Linq;
@@ -24,6 +35,10 @@ ID {Alpha}{AlphaDigit}*
 }
 
 {ID}  { 
+//^^
+// Warning: This pattern always overrides ""div"" 
+// Warning: This pattern always overrides ""mod"" 
+// -----------------------------------------------
   int res = ScannerHelper.GetIDToken(yytext);
   if (res == (int)Tokens.ID)
 	yylval.sVal = yytext;
@@ -39,7 +54,14 @@ ID {Alpha}{AlphaDigit}*
 "-" { return (int)Tokens.MINUS; }
 "*" { return (int)Tokens.MULT; }
 "/" { return (int)Tokens.DIV; }
-"%" { return (int)Tokens.MOD; }
+"mod" { return (int)Tokens.MOD; }
+//^^^
+// Warning: This pattern always overridden by "{ID}" 
+// --------------------------------------------------
+"div" { return (int)Tokens.IDIV; }
+//^^^
+// Warning: This pattern always overridden by "{ID}" 
+// --------------------------------------------------
 "(" { return (int)Tokens.LPAREN; }
 ")" { return (int)Tokens.RPAREN; }
 "," { return (int)Tokens.COLUMN; }
@@ -78,9 +100,7 @@ class ScannerHelper
     keywords.Add("end",(int)Tokens.END);
     keywords.Add("cycle",(int)Tokens.CYCLE);
     keywords.Add("write",(int)Tokens.WRITE);
-    keywords.Add("var",(int)Tokens.VAR);    
-    keywords.Add("mod",(int)Tokens.MOD);    
-    keywords.Add("div",(int)Tokens.IDIV);
+    keywords.Add("var",(int)Tokens.VAR);
   }
   public static int GetIDToken(string s)
   {
@@ -91,3 +111,5 @@ class ScannerHelper
   }
   
 }
+// ==========================================================================
+

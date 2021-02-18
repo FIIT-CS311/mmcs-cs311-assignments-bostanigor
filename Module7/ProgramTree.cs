@@ -134,9 +134,7 @@ namespace ProgramTree
     }
 
     public class IfElseNode : IfNode
-    {
-        public ExprNode Expr { get; set; }
-        public StatementNode Stat { get; set; }
+    {       
         public StatementNode ElseStat { get; set; }
         public IfElseNode(ExprNode expr, StatementNode stat, StatementNode elseStat) : base(expr, stat)
         {

@@ -2,16 +2,22 @@ begin
   var a,b,d;
   b := 2;
   a := 3;
-  a := a * 4 + b;;;
+  a := 5 + a * (4 + b * 3);
   cycle 3
   begin
     a := a + 1;
     if 3 then b := 3 else d := 4;
+    if 3 then 
+    begin
+      d := 2 - (5 * 45 + 6 * 9);
+      write(d);
+    end
+    else d := 4;
     cycle 3
     begin
       a := 1
     end;
-    write(a)
+    write(a)    
   end;
   cycle 3
   begin

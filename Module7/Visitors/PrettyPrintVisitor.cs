@@ -89,7 +89,7 @@ namespace SimpleLang.Visitors
         {
             Text += IndentStr() + "if ";
             i.Expr.Visit(this);
-            Text += "then" + Environment.NewLine;
+            Text += " then" + Environment.NewLine;
             IndentPlus();
             i.Stat.Visit(this);
             IndentMinus();
@@ -99,11 +99,11 @@ namespace SimpleLang.Visitors
         {
             Text += IndentStr() + "if ";
             i.Expr.Visit(this);
-            Text += "then" + Environment.NewLine;
+            Text += " then" + Environment.NewLine;
             IndentPlus();
             i.Stat.Visit(this);
             IndentMinus();
-            Text += IndentStr() + "else" + Environment.NewLine;
+            Text += Environment.NewLine + IndentStr() + "else" + Environment.NewLine;
             IndentPlus();
             i.ElseStat.Visit(this);
             IndentMinus();

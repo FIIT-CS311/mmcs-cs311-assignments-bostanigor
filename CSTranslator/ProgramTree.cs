@@ -38,8 +38,8 @@ namespace ProgramTree
     {
         public ExprNode Left { get; set; }
         public ExprNode Right { get; set; }
-        public string Op { get; set; }
-        public BinOpNode(ExprNode Left, ExprNode Right, string op) 
+        public char Op { get; set; }
+        public BinOpNode(ExprNode Left, ExprNode Right, char op) 
         {
             this.Left = Left;
             this.Right = Right;
@@ -49,6 +49,14 @@ namespace ProgramTree
         {
             v.VisitBinOpNode(this);
         }
+
+        public bool IsMultOrDiv => Op == '*' || Op == '/';
+        public bool IsPlusOrMinus => Op == '+' || Op == '-';
+
+        public bool ToBracketLeft =>
+            IsMultOrDiv && (Left is BinOpNode) && (Left as BinOpNode).IsPlusOrMinus;
+        public bool ToBracketRight =>
+            IsMultOrDiv && (Right is BinOpNode) && (Right as BinOpNode).IsPlusOrMinus;
     }
 
     public abstract class StatementNode : Node // базовый класс для всех операторов
@@ -117,6 +125,37 @@ namespace ProgramTree
         }
     }
 
+    public class IfNode : StatementNode
+    {
+        public ExprNode Expr { get; set; }
+        public StatementNode Stat { get; set; }
+        public IfNode(ExprNode expr, StatementNode stat)
+        {
+            Expr = expr;
+            Stat = stat;
+        }
+
+        public override void Visit(Visitor v)
+        {
+            v.VisitIfNode(this);
+        }
+    }
+
+    public class IfElseNode : IfNode
+    {       
+        public StatementNode ElseStat { get; set; }
+        public IfElseNode(ExprNode expr, StatementNode stat, StatementNode elseStat) : base(expr, stat)
+        {
+            Expr = expr;
+            Stat = stat;
+            ElseStat = elseStat;
+        }
+        public override void Visit(Visitor v)
+        {
+            v.VisitIfElseNode(this);
+        }
+    }
+
     public class EmptyNode : StatementNode
     {
         public override void Visit(Visitor v)
@@ -143,21 +182,16 @@ namespace ProgramTree
         }
     }
 
-    public class IfNode : StatementNode
+    public class VarDefAssignNode : StatementNode
     {
-        public ExprNode expr;
-        public StatementNode ifTrue, ifFalse;
-
-        public IfNode(ExprNode expr, StatementNode ifTrue, StatementNode ifFalse = null)
+        public List<AssignNode> vars = new List<AssignNode>();
+        public void Add(AssignNode n)
         {
-            this.expr = expr;
-            this.ifTrue = ifTrue;
-            this.ifFalse = ifFalse;
+            vars.Add(n);
         }
-
         public override void Visit(Visitor v)
         {
-            v.VisitIfNode(this);
+            v.VisitVarDefAssignNode(this);
         }
     }
 }
